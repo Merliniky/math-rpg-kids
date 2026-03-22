@@ -592,46 +592,275 @@ header h1 {
     box-shadow: 0 8px 15px rgba(232, 67, 147, 0.3);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
+/* 响应式设计 - 手机竖屏优化 */
+@media (max-width: 768px) and (orientation: portrait) {
+    body {
+        padding: 5px;
+        align-items: flex-start;
+        min-height: 100vh;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    #game-container {
+        max-width: 100%;
+        padding: 10px;
+        margin: 0;
+        height: 100vh;
+        max-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    header {
+        margin-bottom: 10px;
+        flex-shrink: 0;
+    }
+    
     header h1 {
-        font-size: 2rem;
+        font-size: 1.3rem;
+    }
+    
+    .level-display {
+        font-size: 0.9rem;
+        padding: 5px 12px;
+        margin-top: 5px;
+    }
+    
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
     
     #battle-area {
-        flex-direction: column;
+        flex-direction: row;
         min-height: auto;
-        padding: 15px;
+        padding: 8px;
+        margin-bottom: 10px;
+        flex-shrink: 0;
     }
     
     #player-pet, #enemy-monster {
-        width: 100%;
-        margin-bottom: 20px;
+        width: 48%;
+        margin-bottom: 0;
     }
     
     .pet-sprite, .monster-sprite {
-        width: 150px;
-        height: 150px;
+        width: 100px;
+        height: 110px;
+    }
+    
+    .pet-image, .monster-image {
+        width: 60px;
+        height: 60px;
+        font-size: 40px;
+    }
+    
+    .pet-name, .monster-name {
+        font-size: 12px;
+    }
+    
+    .trainer-name {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+    
+    .pet-level {
+        font-size: 11px;
+        padding: 3px 8px;
+        top: -20px;
+    }
+    
+    .pet-hp-bar, .monster-hp-bar, .pet-xp-bar {
+        height: 14px;
+        margin: 5px 0;
+    }
+    
+    #math-board {
+        padding: 12px;
+        margin-bottom: 10px;
+        flex-shrink: 0;
+    }
+    
+    #question-container {
+        padding: 10px;
+        margin-bottom: 10px;
     }
     
     #question-text {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
+    }
+    
+    #answer-buttons {
+        gap: 10px;
     }
     
     .answer-btn {
-        width: 80px;
-        height: 80px;
-        font-size: 2rem;
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
     }
     
     #game-controls {
-        flex-direction: column;
-        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+        flex-shrink: 0;
     }
     
     #game-controls button {
-        width: 100%;
-        max-width: 300px;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+        flex: 1;
+    }
+    
+    .explore-hint {
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .hint-icon {
+        font-size: 40px;
+    }
+    
+    .hint-text {
+        font-size: 1.1rem;
+    }
+    
+    .hint-subtext {
+        font-size: 0.9rem;
+    }
+    
+    .restart-btn {
+        padding: 10px 25px;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+}
+
+/* 响应式设计 - 手机横屏优化 */
+@media (max-width: 896px) and (orientation: landscape) {
+    body {
+        padding: 5px;
+        align-items: center;
+        min-height: 100vh;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    #game-container {
+        max-width: 100%;
+        padding: 8px 15px;
+        margin: 0;
+        max-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    header {
+        margin-bottom: 5px;
+    }
+    
+    header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .level-display {
+        font-size: 0.8rem;
+        padding: 3px 10px;
+        margin-top: 3px;
+    }
+    
+    #battle-area {
+        flex-direction: row;
+        min-height: auto;
+        padding: 8px 15px;
+        margin-bottom: 8px;
+    }
+    
+    #player-pet, #enemy-monster {
+        width: 45%;
+    }
+    
+    .pet-sprite, .monster-sprite {
+        width: 90px;
+        height: 100px;
+    }
+    
+    .pet-image, .monster-image {
+        width: 50px;
+        height: 50px;
+        font-size: 35px;
+        margin: 5px auto;
+    }
+    
+    .pet-name, .monster-name {
+        font-size: 11px;
+        margin-top: 3px;
+    }
+    
+    .pet-level {
+        font-size: 10px;
+        padding: 2px 6px;
+        top: -15px;
+    }
+    
+    .pet-hp-bar, .monster-hp-bar, .pet-xp-bar {
+        height: 12px;
+        margin: 3px 0;
+    }
+    
+    #math-board {
+        padding: 8px 15px;
+        margin-bottom: 8px;
+    }
+    
+    #question-container {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+    
+    #question-text {
+        font-size: 1.5rem;
+    }
+    
+    #answer-buttons {
+        gap: 8px;
+    }
+    
+    .answer-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    #game-controls {
+        flex-direction: row;
+        gap: 8px;
+    }
+    
+    #game-controls button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .explore-hint {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+    
+    .hint-icon {
+        font-size: 30px;
+    }
+    
+    .hint-text {
+        font-size: 1rem;
+    }
+    
+    .hint-subtext {
+        font-size: 0.8rem;
     }
 }
 
