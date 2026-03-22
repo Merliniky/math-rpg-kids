@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玩家体验测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .game-frame {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .step {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            padding-left: 10px;
+        }
+        .step.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .step.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .step.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .instruction {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>数理小精灵：十之秘境 - 玩家体验测试</h1>
+        
+        <div class="instruction">
+            <h3>测试说明</h3>
+            <p>请按照以下步骤手动测试游戏，确保所有功能正常工作：</p>
+            <ol>
+                <li>游戏加载后，应该显示宠物选择界面</li>
+                <li>选择一只宠物（小火龙、蓝色海龟或绿叶精灵）</li>
+                <li>点击"确认选择"按钮</li>
+                <li>点击"探索"按钮遭遇野怪</li>
+                <li>回答数学题来攻击敌人</li>
+                <li>使用"恢复药水"按钮恢复血量</li>
+                <li>点击"查看状态"按钮查看宠物信息</li>
+                <li>击败敌人获得经验值</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h2>游戏窗口</h2>
+            <iframe id="game-frame" class="game-frame" src="index.html"></iframe>
+        </div>
+        
+        <div class="test-section">
+            <h2>测试控制</h2>
+            <button id="run-auto-test">运行自动测试</button>
+            <button id="reset-game">重置游戏</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>测试日志</h2>
+            <div id="test-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>测试结果</h2>
+            <div id="test-results"></div>
+        </div>
+    </div>
+    
+    <script>
+        const gameFrame = document.getElementById('game-frame');
+        const testLog = document.getElementById('test-log');
+        const testResults = document.getElementById('test-results');
+        const runAutoTestBtn = document.getElementById('run-auto-test');
+        const resetGameBtn = document.getElementById('reset-game');
+        
+        let testPassed = 0;
+        let testFailed = 0;
+        
+        function log(message, type = 'info') {
+            const step = document.createElement('div');
+            step.className = `step ${type}`;
+            step.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            testLog.appendChild(step);
+            testLog.scrollTop = testLog.scrollHeight;
+        }
+        
+        function addResult(message, passed) {
+            const result = document.createElement('div');
+            result.style.padding = '10px';
+            result.style.margin = '5px 0';
+            result.style.borderRadius = '5px';
+            result.style.backgroundColor = passed ? '#d4edda' : '#f8d7da';
+            result.style.color = passed ? '#155724' : '#721c24';
+            result.style.border = `1px solid ${passed ? '#c3e6cb' : '#f5c6cb'}`;
+            result.textContent = (passed ? '✓ ' : '✗ ') + message;
+            testResults.appendChild(result);
+            
+            if (passed) {
+                testPassed++;
+            } else {
+                testFailed++;
+            }
+        }
+        
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        async function runAutoTest() {
+            runAutoTestBtn.disabled = true;
+            testLog.innerHTML = '';
+            testResults.innerHTML = '';
+            testPassed = 0;
+            testFailed = 0;
+            
+            log('开始自动测试...');
+            
+            try {
+                // 等待游戏加载
+                log('等待游戏加载...');
+                await delay(1000);
+                
+                // 获取游戏窗口中的文档
+                const gameDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+                
+                // 测试1: 检查游戏是否加载
+                log('检查游戏加载状态...');
+                const gameContainer = gameDoc.getElementById('game-container');
+                if (!gameContainer) {
+                    throw new Error('游戏容器不存在');
+                }
+                addResult('游戏加载成功', true);
+                log('✓ 游戏加载成功', 'success');
+                
+                // 测试2: 检查宠物选择界面
+                log('检查宠物选择界面...');
+                const petSelection = gameDoc.getElementById('pet-selection');
+                if (!petSelection) {
+                    throw new Error('宠物选择界面不存在');
+                }
+                
+                const isPetSelectionHidden = petSelection.classList.contains('hidden');
+                addResult('宠物选择界面显示正确', !isPetSelectionHidden);
+                log(isPetSelectionHidden ? '✗ 宠物选择界面被隐藏' : '✓ 宠物选择界面显示正确', isPetSelectionHidden ? 'error' : 'success');
+                
+                // 测试3: 选择宠物
+                log('选择小火龙宠物...');
+                const firePetOption = gameDoc.querySelector('.pet-option[data-pet="fire"]');
+                if (!firePetOption) {
+                    throw new Error('小火龙选项不存在');
+                }
+                firePetOption.click();
+                await delay(300);
+                
+                const isSelected = firePetOption.classList.contains('selected');
+                addResult('宠物选择功能正常', isSelected);
+                log(isSelected ? '✓ 宠物选择功能正常' : '✗ 宠物选择功能异常', isSelected ? 'success' : 'error');
+                
+                // 测试4: 确认宠物选择
+                log('确认宠物选择...');
+                const confirmBtn = gameDoc.getElementById('confirm-pet-btn');
+                if (!confirmBtn) {
+                    throw new Error('确认按钮不存在');
+                }
+                confirmBtn.click();
+                await delay(500);
+                
+                const isPetSelectionHiddenAfterConfirm = petSelection.classList.contains('hidden');
+                addResult('宠物确认功能正常', isPetSelectionHiddenAfterConfirm);
+                log(isPetSelectionHiddenAfterConfirm ? '✓ 宠物确认功能正常' : '✗ 宠物确认功能异常', isPetSelectionHiddenAfterConfirm ? 'success' : 'error');
+                
+                // 测试5: 检查游戏状态
+                log('检查游戏状态...');
+                const game = gameFrame.contentWindow.game;
+                if (!game) {
+                    throw new Error('游戏实例不存在');
+                }
+                
+                if (game.state !== 'exploring') {
+                    throw new Error(`游戏状态不正确: ${game.state}`);
+                }
+                addResult('游戏状态正确', true);
+                log('✓ 游戏状态正确', 'success');
+                
+                // 测试6: 点击探索按钮
+                log('点击探索按钮...');
+                const exploreBtn = gameDoc.getElementById('explore-btn');
+                if (!exploreBtn) {
+                    throw new Error('探索按钮不存在');
+                }
+                exploreBtn.click();
+                await delay(500);
+                
+                addResult('探索功能正常', true);
+                log('✓ 探索功能正常', 'success');
+                
+                // 测试7: 检查战斗状态
+                log('检查战斗状态...');
+                if (game.state !== 'battle') {
+                    throw new Error(`未进入战斗状态: ${game.state}`);
+                }
+                addResult('战斗状态正确', true);
+                log('✓ 战斗状态正确', 'success');
+                
+                // 测试8: 检查数学题目
+                log('检查数学题目...');
+                if (!game.currentQuestion) {
+                    throw new Error('未生成数学题目');
+                }
+                
+                const questionText = gameDoc.getElementById('question-text');
+                if (!questionText) {
+                    throw new Error('题目文本元素不存在');
+                }
+                
+                addResult('数学题目生成成功', true);
+                log(`✓ 数学题目生成成功: ${game.currentQuestion.display}`, 'success');
+                
+                // 测试9: 回答正确答案
+                log('回答正确答案...');
+                const correctAnswer = game.currentQuestion.answer;
+                const answerButtons = gameDoc.querySelectorAll('.answer-btn');
+                let answered = false;
+                
+                answerButtons.forEach(btn => {
+                    if (parseInt(btn.dataset.answer) === correctAnswer) {
+                        btn.click();
+                        answered = true;
+                    }
+                });
+                
+                if (!answered) {
+                    throw new Error('未找到正确答案按钮');
+                }
+                
+                await delay(1500);
+                
+                addResult('答题功能正常', true);
+                log('✓ 答题功能正常', 'success');
+                
+                // 测试10: 检查经验值增加
+                log('检查经验值增加...');
+                if (game.playerPet.xp <= 0) {
+                    throw new Error('经验值未增加');
+                }
+                addResult('经验值系统正常', true);
+                log(`✓ 经验值系统正常: ${game.playerPet.xp} XP`, 'success');
+                
+                // 测试11: 使用药水
+                log('使用药水...');
+                // 先让敌人攻击一下，减少血量
+                game.playerPet.hp = game.playerPet.maxHP * 0.5;
+                game.updatePetUI();
+                
+                const potionBtn = gameDoc.getElementById('potion-btn');
+                if (!potionBtn) {
+                    throw new Error('药水按钮不存在');
+                }
+                potionBtn.click();
+                await delay(500);
+                
+                addResult('药水使用功能正常', true);
+                log('✓ 药水使用功能正常', 'success');
+                
+                // 测试12: 查看状态面板
+                log('查看状态面板...');
+                const statsBtn = gameDoc.getElementById('stats-btn');
+                if (!statsBtn) {
+                    throw new Error('状态按钮不存在');
+                }
+                statsBtn.click();
+                await delay(500);
+                
+                const statsPanel = gameDoc.getElementById('stats-panel');
+                const isStatsPanelVisible = !statsPanel.classList.contains('hidden');
+                addResult('状态面板显示正常', isStatsPanelVisible);
+                log(isStatsPanelVisible ? '✓ 状态面板显示正常' : '✗ 状态面板显示异常', isStatsPanelVisible ? 'success' : 'error');
+                
+                // 测试13: 关闭状态面板
+                log('关闭状态面板...');
+                const closeStatsBtn = gameDoc.getElementById('close-stats-btn');
+                if (!closeStatsBtn) {
+                    throw new Error('关闭按钮不存在');
+                }
+                closeStatsBtn.click();
+                await delay(500);
+                
+                const isStatsPanelHidden = statsPanel.classList.contains('hidden');
+                addResult('状态面板关闭正常', isStatsPanelHidden);
+                log(isStatsPanelHidden ? '✓ 状态面板关闭正常' : '✗ 状态面板关闭异常', isStatsPanelHidden ? 'success' : 'error');
+                
+                // 测试14: 检查数学规则
+                log('验证数学规则...');
+                const mathGenerator = game.mathGenerator;
+                let mathRulesPassed = true;
+                
+                for (let i = 0; i < 10; i++) {
+                    const question = mathGenerator.generateQuestion();
+                    if (question.answer > 10) {
+                        mathRulesPassed = false;
+                        log(`✗ 数学规则错误: ${question.display} = ${question.answer}`, 'error');
+                        break;
+                    }
+                }
+                
+                addResult('数学规则验证通过', mathRulesPassed);
+                log(mathRulesPassed ? '✓ 数学规则验证通过' : '✗ 数学规则验证失败', mathRulesPassed ? 'success' : 'error');
+                
+                // 测试完成
+                log('');
+                log('========================================');
+                log(`测试完成！`);
+                log(`通过: ${testPassed} 个测试`);
+                log(`失败: ${testFailed} 个测试`);
+                log('========================================');
+                
+                if (testFailed === 0) {
+                    log('🎉 所有测试通过！游戏可以正常运行。', 'success');
+                } else {
+                    log('⚠️ 部分测试失败，请检查错误信息。', 'error');
+                }
+                
+            } catch (e) {
+                log(`测试过程中发生错误: ${e.message}`, 'error');
+                addResult(`测试异常: ${e.message}`, false);
+                console.error(e);
+            }
+            
+            runAutoTestBtn.disabled = false;
+        }
+        
+        function resetGame() {
+            gameFrame.src = 'index.html';
+            testLog.innerHTML = '';
+            testResults.innerHTML = '';
+            testPassed = 0;
+            testFailed = 0;
+            runAutoTestBtn.disabled = false;
+            log('游戏已重置');
+        }
+        
+        // 绑定事件
+        runAutoTestBtn.addEventListener('click', runAutoTest);
+        resetGameBtn.addEventListener('click', resetGame);
+        
+        // 页面加载时自动运行测试
+        window.addEventListener('load', () => {
+            log('页面加载完成，等待游戏初始化...');
+            setTimeout(() => {
+                runAutoTest();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

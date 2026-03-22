@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学题目生成器测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .question {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .options {
+            margin: 10px 0;
+        }
+        .option {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>数学题目生成器测试</h1>
+        
+        <div class="test-section">
+            <h2>基础功能测试</h2>
+            <button onclick="testBasic()">运行基础测试</button>
+            <div id="basic-test-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>边界条件测试</h2>
+            <button onclick="testBoundary()">运行边界测试</button>
+            <div id="boundary-test-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>随机题目生成</h2>
+            <button onclick="generateQuestions()">生成10个题目</button>
+            <div id="generated-questions"></div>
+        </div>
+    </div>
+    
+    <script src="js/math-generator.js"></script>
+    <script>
+        const generator = new MathQuestionGenerator();
+        
+        function testBasic() {
+            const resultsDiv = document.getElementById('basic-test-results');
+            resultsDiv.innerHTML = '';
+            
+            let passed = 0;
+            let failed = 0;
+            
+            // 测试1：加法规则
+            for (let i = 0; i < 10; i++) {
+                const question = generator.generateAddition();
+                if (question.answer <= 10 && question.a >= 0 && question.b >= 0) {
+                    passed++;
+                    resultsDiv.innerHTML += `<div class="test-result pass">加法测试 ${i+1}: ${question.display} = ${question.answer} (通过)</div>`;
+                } else {
+                    failed++;
+                    resultsDiv.innerHTML += `<div class="test-result fail">加法测试 ${i+1}: ${question.display} = ${question.answer} (失败)</div>`;
+                }
+            }
+            
+            // 测试2：减法规则
+            generator.setDifficulty(3);
+            for (let i = 0; i < 10; i++) {
+                const question = generator.generateSubtraction();
+                if (question && question.answer >= 0 && question.x <= 10 && question.x >= question.y) {
+                    passed++;
+                    resultsDiv.innerHTML += `<div class="test-result pass">减法测试 ${i+1}: ${question.display} = ${question.answer} (通过)</div>`;
+                } else if (question) {
+                    failed++;
+                    resultsDiv.innerHTML += `<div class="test-result fail">减法测试 ${i+1}: ${question.display} = ${question.answer} (失败)</div>`;
+                }
+            }
+            
+            resultsDiv.innerHTML += `<div class="test-result"><strong>总计: ${passed} 通过, ${failed} 失败</strong></div>`;
+        }
+        
+        function testBoundary() {
+            const resultsDiv = document.getElementById('boundary-test-results');
+            resultsDiv.innerHTML = '';
+            
+            let passed = 0;
+            let failed = 0;
+            
+            // 测试最大和值
+            for (let i = 0; i < 5; i++) {
+                const question = generator.generateAddition(10);
+                if (question.answer <= 10) {
+                    passed++;
+                    resultsDiv.innerHTML += `<div class="test-result pass">最大和值测试 ${i+1}: ${question.display} = ${question.answer} (通过)</div>`;
+                } else {
+                    failed++;
+                    resultsDiv.innerHTML += `<div class="test-result fail">最大和值测试 ${i+1}: ${question.display} = ${question.answer} (失败)</div>`;
+                }
+            }
+            
+            // 测试减法边界
+            generator.setDifficulty(3);
+            for (let i = 0; i < 5; i++) {
+                const question = generator.generateSubtraction(10);
+                if (question && question.x <= 10 && question.x >= question.y && question.answer >= 0) {
+                    passed++;
+                    resultsDiv.innerHTML += `<div class="test-result pass">减法边界测试 ${i+1}: ${question.display} = ${question.answer} (通过)</div>`;
+                } else if (question) {
+                    failed++;
+                    resultsDiv.innerHTML += `<div class="test-result fail">减法边界测试 ${i+1}: ${question.display} = ${question.answer} (失败)</div>`;
+                }
+            }
+            
+            resultsDiv.innerHTML += `<div class="test-result"><strong>总计: ${passed} 通过, ${failed} 失败</strong></div>`;
+        }
+        
+        function generateQuestions() {
+            const questionsDiv = document.getElementById('generated-questions');
+            questionsDiv.innerHTML = '';
+            
+            for (let i = 1; i <= 3; i++) {
+                generator.setDifficulty(i);
+                questionsDiv.innerHTML += `<h3>难度 ${i} (${generator.area})</h3>`;
+                
+                for (let j = 0; j < 3; j++) {
+                    const question = generator.generateQuestion();
+                    questionsDiv.innerHTML += `
+                        <div class="question">${question.display}</div>
+                        <div class="options">
+                            ${question.options.map(opt => `<span class="option">${opt}</span>`).join(' ')}
+                        </div>
+                        <div>正确答案: ${question.answer}</div>
+                        <hr>
+                    `;
+                }
+            }
+        }
+        
+        // 页面加载时运行基础测试
+        window.onload = testBasic;
+    </script>
+</body>
+</html>

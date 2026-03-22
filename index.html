@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数理小精灵：十之秘境</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <header>
+            <h1>数理小精灵：十之秘境</h1>
+            <div id="level-display" class="level-display">第1关 尼比道馆</div>
+        </header>
+        
+        <main>
+            <div id="battle-area">
+                <div id="player-pet">
+                    <div class="pet-sprite">
+                        <div class="pet-level">Lv.<span id="player-level">1</span></div>
+                        <div class="pet-image" id="player-pet-image">🔥</div>
+                        <div class="pet-name" id="player-pet-name">小火龙</div>
+                        <div class="pet-hp-bar">
+                            <div class="hp-fill" id="player-hp-fill"></div>
+                        </div>
+                        <div class="pet-xp-bar">
+                            <div class="xp-fill" id="player-xp-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="enemy-monster">
+                    <div class="monster-sprite">
+                        <div class="trainer-name" id="trainer-name"></div>
+                        <div class="monster-name" id="monster-name"></div>
+                        <div class="monster-image" id="enemy-monster-image"></div>
+                        <div class="monster-hp-bar">
+                            <div class="hp-fill" id="enemy-hp-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="math-board" class="hidden">
+                <div id="question-container">
+                    <span id="question-text">准备战斗！</span>
+                </div>
+                
+                <div id="answer-buttons">
+                    <button class="answer-btn" data-answer="0">?</button>
+                    <button class="answer-btn" data-answer="0">?</button>
+                    <button class="answer-btn" data-answer="0">?</button>
+                </div>
+            </div>
+            
+            <div id="explore-hint" class="explore-hint">
+                <div class="hint-content">
+                    <span class="hint-icon">⚔️</span>
+                    <span class="hint-text">点击"探索"按钮开始冒险！</span>
+                    <span class="hint-subtext">第1关 尼比道馆 (1/5)</span>
+                </div>
+            </div>
+            
+            <div id="game-controls">
+                <button id="explore-btn">探索</button>
+                <button id="potion-btn">恢复药水</button>
+                <button id="stats-btn">查看状态</button>
+            </div>
+        </main>
+        
+        <div id="message-overlay" class="hidden">
+            <div id="message-content">
+                <p id="message-text">遭遇了野生怪兽！</p>
+                <button id="message-ok-btn">确定</button>
+            </div>
+        </div>
+        
+        <div id="pet-selection">
+            <h2>选择你的初始宝可梦</h2>
+            <div class="pet-options">
+                <div class="pet-option" data-pet="fire">
+                    <div class="pet-preview fire-pet">🔥</div>
+                    <span>小火龙</span>
+                    <small>火系 · 攻击型</small>
+                </div>
+                <div class="pet-option" data-pet="water">
+                    <div class="pet-preview water-pet">💧</div>
+                    <span>杰尼龟</span>
+                    <small>水系 · 防御型</small>
+                </div>
+                <div class="pet-option" data-pet="grass">
+                    <div class="pet-preview grass-pet">🌱</div>
+                    <span>妙蛙种子</span>
+                    <small>草系 · 平衡型</small>
+                </div>
+            </div>
+            <button id="confirm-pet-btn">确认选择</button>
+        </div>
+        
+        <div id="stats-panel" class="hidden">
+            <h2>宝可梦状态</h2>
+            <div class="stats-content">
+                <p>宝可梦名称：<span id="pet-name">小火龙</span></p>
+                <p>等级：<span id="pet-level-display">1</span></p>
+                <p>经验值：<span id="pet-xp">0</span>/<span id="xp-to-next">100</span></p>
+                <p>生命值：<span id="pet-hp">100</span>/<span id="pet-max-hp">100</span></p>
+                <p>攻击力：<span id="pet-attack">10</span></p>
+                <p>当前关卡：<span id="current-level">1-1</span></p>
+                <p>击败训练师数：<span id="monsters-defeated">0</span></p>
+            </div>
+            <button id="close-stats-btn">关闭</button>
+        </div>
+    </div>
+    
+    <script src="js/math-generator.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>

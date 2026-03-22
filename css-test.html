@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #test-element {
+            width: 200px;
+            height: 100px;
+            background: red;
+            color: white;
+            padding: 20px;
+            margin: 20px;
+        }
+        
+        #test-element.hidden {
+            display: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS 隐藏测试</h1>
+    
+    <div id="test-element">
+        这是一个测试元素
+    </div>
+    
+    <button onclick="toggleHidden()">切换隐藏状态</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        const element = document.getElementById('test-element');
+        const resultDiv = document.getElementById('result');
+        
+        function toggleHidden() {
+            element.classList.toggle('hidden');
+            updateResult();
+        }
+        
+        function updateResult() {
+            const isHidden = element.classList.contains('hidden');
+            const computedDisplay = window.getComputedStyle(element).display;
+            
+            resultDiv.innerHTML = `
+                <p>元素是否有 hidden 类: ${isHidden}</p>
+                <p>计算后的 display 值: ${computedDisplay}</p>
+                <p>元素是否可见: ${computedDisplay !== 'none'}</p>
+            `;
+        }
+        
+        // 初始状态
+        updateResult();
+    </script>
+</body>
+</html>

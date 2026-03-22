@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏完整性测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .step {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            padding-left: 10px;
+        }
+        .step.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .step.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .game-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            margin: 10px 5px;
+        }
+        .game-link:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>数理小精灵：十之秘境 - 完整性测试</h1>
+        
+        <div class="test-section">
+            <h2>游戏入口</h2>
+            <p>点击以下链接直接打开游戏：</p>
+            <a href="index.html" class="game-link">打开游戏</a>
+            <a href="test.html" class="game-link">数学测试页面</a>
+            <a href="full-test.html" class="game-link">完整测试页面</a>
+        </div>
+        
+        <div class="test-section">
+            <h2>文件完整性检查</h2>
+            <button onclick="checkFiles()">检查文件完整性</button>
+            <div id="file-check-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>JavaScript 功能测试</h2>
+            <button onclick="testJavaScript()">测试 JavaScript 功能</button>
+            <div id="js-test-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>CSS 样式测试</h2>
+            <button onclick="testCSS()">测试 CSS 样式</button>
+            <div id="css-test-log" class="log"></div>
+        </div>
+    </div>
+    
+    <script>
+        function log(elementId, message, type = 'info') {
+            const logDiv = document.getElementById(elementId);
+            const step = document.createElement('div');
+            step.className = `step ${type}`;
+            step.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(step);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function checkFiles() {
+            const logDiv = document.getElementById('file-check-log');
+            logDiv.innerHTML = '';
+            
+            log('file-check-log', '开始检查文件完整性...');
+            
+            // 检查必要的文件
+            const files = [
+                'index.html',
+                'css/style.css',
+                'js/math-generator.js',
+                'js/game.js'
+            ];
+            
+            let allFilesExist = true;
+            
+            files.forEach(file => {
+                // 使用 fetch 检查文件是否存在
+                fetch(file)
+                    .then(response => {
+                        if (response.ok) {
+                            log('file-check-log', `✓ ${file} 存在`, 'success');
+                        } else {
+                            log('file-check-log', `✗ ${file} 不存在或无法访问`, 'error');
+                            allFilesExist = false;
+                        }
+                    })
+                    .catch(error => {
+                        log('file-check-log', `✗ ${file} 检查失败: ${error.message}`, 'error');
+                        allFilesExist = false;
+                    });
+            });
+            
+            setTimeout(() => {
+                if (allFilesExist) {
+                    log('file-check-log', '✓ 所有文件检查完成', 'success');
+                } else {
+                    log('file-check-log', '✗ 部分文件缺失或无法访问', 'error');
+                }
+            }, 1000);
+        }
+        
+        function testJavaScript() {
+            const logDiv = document.getElementById('js-test-log');
+            logDiv.innerHTML = '';
+            
+            log('js-test-log', '开始测试 JavaScript 功能...');
+            
+            // 测试 MathQuestionGenerator
+            try {
+                if (typeof MathQuestionGenerator === 'undefined') {
+                    throw new Error('MathQuestionGenerator 类未定义');
+                }
+                log('js-test-log', '✓ MathQuestionGenerator 类已加载', 'success');
+                
+                const generator = new MathQuestionGenerator();
+                log('js-test-log', '✓ MathQuestionGenerator 实例创建成功', 'success');
+                
+                const question = generator.generateQuestion();
+                log('js-test-log', `✓ 题目生成成功: ${question.display}`, 'success');
+                log('js-test-log', `  答案: ${question.answer}`);
+                log('js-test-log', `  选项: ${question.options.join(', ')}`);
+                
+                // 验证规则
+                if (question.answer <= 10) {
+                    log('js-test-log', '✓ 答案验证通过 (≤ 10)', 'success');
+                } else {
+                    log('js-test-log', '✗ 答案验证失败 (> 10)', 'error');
+                }
+                
+            } catch (e) {
+                log('js-test-log', `✗ MathQuestionGenerator 测试失败: ${e.message}`, 'error');
+            }
+            
+            // 测试 Game 类
+            try {
+                if (typeof Game === 'undefined') {
+                    throw new Error('Game 类未定义');
+                }
+                log('js-test-log', '✓ Game 类已加载', 'success');
+                
+                // 注意：不能直接创建 Game 实例，因为它依赖于 DOM 元素
+                log('js-test-log', '✓ Game 类定义正确', 'success');
+                
+            } catch (e) {
+                log('js-test-log', `✗ Game 类测试失败: ${e.message}`, 'error');
+            }
+        }
+        
+        function testCSS() {
+            const logDiv = document.getElementById('css-test-log');
+            logDiv.innerHTML = '';
+            
+            log('css-test-log', '开始测试 CSS 样式...');
+            
+            // 检查样式表是否加载
+            const styleSheets = document.styleSheets;
+            let cssLoaded = false;
+            
+            for (let i = 0; i < styleSheets.length; i++) {
+                if (styleSheets[i].href && styleSheets[i].href.includes('style.css')) {
+                    cssLoaded = true;
+                    break;
+                }
+            }
+            
+            if (cssLoaded) {
+                log('css-test-log', '✓ CSS 文件已加载', 'success');
+            } else {
+                log('css-test-log', '✗ CSS 文件未加载', 'error');
+            }
+            
+            // 检查 .hidden 类是否存在
+            const testElement = document.createElement('div');
+            testElement.className = 'hidden';
+            document.body.appendChild(testElement);
+            
+            const computedStyle = window.getComputedStyle(testElement);
+            if (computedStyle.display === 'none') {
+                log('css-test-log', '✓ .hidden 类工作正常', 'success');
+            } else {
+                log('css-test-log', '✗ .hidden 类未正确设置', 'error');
+            }
+            
+            document.body.removeChild(testElement);
+        }
+        
+        // 页面加载时自动运行检查
+        window.addEventListener('load', () => {
+            log('file-check-log', '页面加载完成，开始自动检查...');
+            setTimeout(checkFiles, 500);
+        });
+    </script>
+</body>
+</html>

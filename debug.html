@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        #log {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>游戏测试页面</h1>
+    <div id="status">正在加载...</div>
+    <div id="log"></div>
+    
+    <script src="js/math-generator.js"></script>
+    <script src="js/game.js"></script>
+    <script>
+        const logDiv = document.getElementById('log');
+        const statusDiv = document.getElementById('status');
+        
+        function log(message, isError = false) {
+            const line = document.createElement('div');
+            line.textContent = message;
+            line.className = isError ? 'error' : 'success';
+            logDiv.appendChild(line);
+        }
+        
+        // 测试数学生成器
+        try {
+            const generator = new MathQuestionGenerator();
+            log('✓ 数学生成器加载成功');
+            
+            const question = generator.generateQuestion();
+            log(`✓ 题目生成成功: ${question.display}`);
+            log(`  答案: ${question.answer}`);
+            log(`  选项: ${question.options.join(', ')}`);
+        } catch (e) {
+            log(`✗ 数学生成器错误: ${e.message}`, true);
+        }
+        
+        // 测试游戏类
+        try {
+            // 检查 Game 类是否存在
+            if (typeof Game === 'undefined') {
+                throw new Error('Game 类未定义');
+            }
+            log('✓ Game 类加载成功');
+            
+            // 检查必要的元素是否存在
+            const requiredElements = [
+                'player-level', 'player-hp-fill', 'player-xp-fill',
+                'enemy-hp-fill', 'question-text', 'explore-btn',
+                'potion-btn', 'stats-btn', 'message-overlay',
+                'message-text', 'message-ok-btn', 'pet-selection',
+                'confirm-pet-btn', 'stats-panel', 'close-stats-btn',
+                'pet-name', 'pet-level-display', 'pet-xp',
+                'xp-to-next', 'pet-hp', 'pet-max-hp', 'pet-attack', 'monsters-defeated'
+            ];
+            
+            const missingElements = requiredElements.filter(id => !document.getElementById(id));
+            if (missingElements.length > 0) {
+                throw new Error(`缺少以下元素: ${missingElements.join(', ')}`);
+            }
+            log('✓ 所有必要元素存在');
+            
+            // 检查答案按钮
+            const answerButtons = document.querySelectorAll('.answer-btn');
+            if (answerButtons.length !== 3) {
+                throw new Error(`答案按钮数量不正确: ${answerButtons.length} (应为 3)`);
+            }
+            log(`✓ 答案按钮数量正确: ${answerButtons.length}`);
+            
+            // 检查宠物选项
+            const petOptions = document.querySelectorAll('.pet-option');
+            if (petOptions.length !== 3) {
+                throw new Error(`宠物选项数量不正确: ${petOptions.length} (应为 3)`);
+            }
+            log(`✓ 宠物选项数量正确: ${petOptions.length}`);
+            
+            // 尝试创建游戏实例
+            const game = new Game();
+            log('✓ 游戏实例创建成功');
+            
+            statusDiv.textContent = '所有测试通过！';
+            statusDiv.className = 'success';
+        } catch (e) {
+            log(`✗ 游戏类错误: ${e.message}`, true);
+            statusDiv.textContent = '测试失败！';
+            statusDiv.className = 'error';
+        }
+    </script>
+</body>
+</html>

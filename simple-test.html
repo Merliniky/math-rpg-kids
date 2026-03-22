@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏加载测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .game-frame {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .step {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            padding-left: 10px;
+        }
+        .step.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .step.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>游戏加载测试</h1>
+        
+        <div>
+            <button onclick="loadGame()">加载游戏</button>
+            <button onclick="checkGame()">检查游戏状态</button>
+            <button onclick="testPetSelection()">测试宠物选择</button>
+            <button onclick="testBattle()">测试战斗</button>
+        </div>
+        
+        <iframe id="game-frame" class="game-frame" src="about:blank"></iframe>
+        
+        <div id="log" class="log"></div>
+    </div>
+    
+    <script>
+        const gameFrame = document.getElementById('game-frame');
+        const logDiv = document.getElementById('log');
+        
+        function log(message, type = 'info') {
+            const step = document.createElement('div');
+            step.className = `step ${type}`;
+            step.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(step);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function loadGame() {
+            log('加载游戏...');
+            gameFrame.src = 'index.html';
+            
+            gameFrame.onload = () => {
+                log('✓ 游戏页面加载完成', 'success');
+                
+                // 等待一段时间让游戏初始化
+                setTimeout(() => {
+                    checkGame();
+                }, 1000);
+            };
+            
+            gameFrame.onerror = () => {
+                log('✗ 游戏页面加载失败', 'error');
+            };
+        }
+        
+        function checkGame() {
+            try {
+                const gameDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+                const game = gameFrame.contentWindow.game;
+                
+                log('检查游戏状态...');
+                
+                // 检查游戏容器
+                const gameContainer = gameDoc.getElementById('game-container');
+                if (gameContainer) {
+                    log('✓ 游戏容器存在', 'success');
+                } else {
+                    log('✗ 游戏容器不存在', 'error');
+                }
+                
+                // 检查游戏实例
+                if (game) {
+                    log(`✓ 游戏实例存在`, 'success');
+                    log(`  游戏状态: ${game.state}`);
+                    log(`  玩家宠物: ${game.playerPet ? game.playerPet.name : '未创建'}`);
+                } else {
+                    log('✗ 游戏实例不存在', 'error');
+                }
+                
+                // 检查宠物选择界面
+                const petSelection = gameDoc.getElementById('pet-selection');
+                if (petSelection) {
+                    const isHidden = petSelection.classList.contains('hidden');
+                    log(`宠物选择界面: ${isHidden ? '隐藏' : '显示'}`);
+                } else {
+                    log('✗ 宠物选择界面不存在', 'error');
+                }
+                
+                // 检查数学生成器
+                if (game && game.mathGenerator) {
+                    log('✓ 数学生成器存在', 'success');
+                    
+                    // 测试题目生成
+                    const question = game.mathGenerator.generateQuestion();
+                    log(`测试题目: ${question.display}`);
+                    log(`答案: ${question.answer}`);
+                    log(`选项: ${question.options.join(', ')}`);
+                } else {
+                    log('✗ 数学生成器不存在', 'error');
+                }
+                
+            } catch (e) {
+                log(`检查游戏状态时发生错误: ${e.message}`, 'error');
+                console.error(e);
+            }
+        }
+        
+        function testPetSelection() {
+            try {
+                const gameDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+                const game = gameFrame.contentWindow.game;
+                
+                log('测试宠物选择...');
+                
+                // 选择小火龙
+                const firePetOption = gameDoc.querySelector('.pet-option[data-pet="fire"]');
+                if (firePetOption) {
+                    firePetOption.click();
+                    log('✓ 点击小火龙选项', 'success');
+                } else {
+                    log('✗ 小火龙选项不存在', 'error');
+                    return;
+                }
+                
+                // 确认选择
+                setTimeout(() => {
+                    const confirmBtn = gameDoc.getElementById('confirm-pet-btn');
+                    if (confirmBtn) {
+                        confirmBtn.click();
+                        log('✓ 点击确认按钮', 'success');
+                        
+                        // 检查宠物是否创建
+                        setTimeout(() => {
+                            if (game && game.playerPet) {
+                                log(`✓ 宠物创建成功: ${game.playerPet.name}`, 'success');
+                            } else {
+                                log('✗ 宠物未创建', 'error');
+                            }
+                        }, 500);
+                    } else {
+                        log('✗ 确认按钮不存在', 'error');
+                    }
+                }, 300);
+                
+            } catch (e) {
+                log(`测试宠物选择时发生错误: ${e.message}`, 'error');
+                console.error(e);
+            }
+        }
+        
+        function testBattle() {
+            try {
+                const gameDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+                const game = gameFrame.contentWindow.game;
+                
+                log('测试战斗...');
+                
+                // 点击探索按钮
+                const exploreBtn = gameDoc.getElementById('explore-btn');
+                if (exploreBtn) {
+                    exploreBtn.click();
+                    log('✓ 点击探索按钮', 'success');
+                    
+                    // 检查是否进入战斗
+                    setTimeout(() => {
+                        if (game && game.state === 'battle') {
+                            log('✓ 进入战斗状态', 'success');
+                            
+                            // 检查数学题目
+                            if (game.currentQuestion) {
+                                log(`✓ 数学题目生成: ${game.currentQuestion.display}`, 'success');
+                                
+                                // 回答正确答案
+                                const correctAnswer = game.currentQuestion.answer;
+                                const answerButtons = gameDoc.querySelectorAll('.answer-btn');
+                                let answered = false;
+                                
+                                answerButtons.forEach(btn => {
+                                    if (parseInt(btn.dataset.answer) === correctAnswer) {
+                                        btn.click();
+                                        answered = true;
+                                    }
+                                });
+                                
+                                if (answered) {
+                                    log('✓ 回答正确答案', 'success');
+                                } else {
+                                    log('✗ 未找到正确答案按钮', 'error');
+                                }
+                            } else {
+                                log('✗ 数学题目未生成', 'error');
+                            }
+                        } else {
+                            log(`✗ 未进入战斗状态: ${game ? game.state : '未知'}`, 'error');
+                        }
+                    }, 500);
+                } else {
+                    log('✗ 探索按钮不存在', 'error');
+                }
+                
+            } catch (e) {
+                log(`测试战斗时发生错误: ${e.message}`, 'error');
+                console.error(e);
+            }
+        }
+        
+        // 页面加载时自动加载游戏
+        window.addEventListener('load', () => {
+            log('页面加载完成，开始加载游戏...');
+            setTimeout(loadGame, 1000);
+        });
+    </script>
+</body>
+</html>
