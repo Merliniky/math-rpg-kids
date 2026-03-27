@@ -3,6 +3,8 @@
  * 包含战斗系统、宠物养成、关卡系统等核心功能
  */
 
+const GAME_VERSION = '0.38.1';
+
 // 游戏状态枚举
 const GameState = {
     START: 'start',
