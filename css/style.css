@@ -708,18 +708,18 @@ header h1 {
     }
     
     #question-text {
-        font-size: 1.3rem;
+        font-size: 2rem;
     }
-    
+
     #answer-buttons {
-        gap: 6px;
+        gap: 10px;
     }
-    
+
     .answer-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-        border-radius: 8px;
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+        border-radius: 12px;
     }
     
     #game-controls {
@@ -731,10 +731,10 @@ header h1 {
     }
     
     #game-controls button {
-        padding: 6px 10px;
-        font-size: 0.75rem;
+        padding: 10px 14px;
+        font-size: 0.9rem;
         flex: 1;
-        border-radius: 6px;
+        border-radius: 8px;
     }
     
     .explore-hint {
@@ -859,9 +859,9 @@ header h1 {
     }
     
     .answer-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
+        width: 65px;
+        height: 65px;
+        font-size: 1.6rem;
     }
     
     #game-controls {
@@ -929,4 +929,82 @@ header h1 {
 @keyframes star {
     0% { opacity: 1; transform: translateY(0) scale(1); }
     100% { opacity: 0; transform: translateY(-50px) scale(0.5); }
+}
+
+/* 答题反馈弹窗 */
+.feedback-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    pointer-events: none;
+    animation: feedback-fade 1.2s ease-out forwards;
+}
+
+.feedback-overlay.correct-feedback {
+    background: rgba(0, 184, 148, 0.15);
+}
+
+.feedback-overlay.wrong-feedback {
+    background: rgba(214, 48, 49, 0.15);
+}
+
+.feedback-content {
+    text-align: center;
+    animation: feedback-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.feedback-emoji {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.feedback-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.feedback-overlay.correct-feedback .feedback-text {
+    color: #00b894;
+}
+
+.feedback-overlay.wrong-feedback .feedback-text {
+    color: #d63031;
+}
+
+.feedback-answer {
+    font-size: 1.5rem;
+    color: #636e72;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+@keyframes feedback-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes feedback-fade {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+    .feedback-emoji {
+        font-size: 4rem;
+    }
+    .feedback-text {
+        font-size: 2rem;
+    }
+    .feedback-answer {
+        font-size: 1.2rem;
+    }
 }

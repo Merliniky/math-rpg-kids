@@ -770,8 +770,8 @@ class Game {
         this.elements.mathBoard.classList.remove('hidden');
         this.elements.exploreHint.classList.add('hidden');
         
-        // 设置题目难度
-        this.mathGenerator.setDifficulty(this.currentArea);
+        // 设置题目难度（难度已在encounter*方法中设置，此处作为备用）
+        this.mathGenerator.setDifficultyByLevel(this.currentLevel, this.currentSubLevel);
         
         // 更新敌人血条
         this.updateEnemyUI();
@@ -851,20 +851,23 @@ class Game {
      */
     handleCorrectAnswer(button) {
         button.classList.add('correct');
-        
+
+        // 显示"正确"反馈
+        this.showFeedback(true);
+
         // 播放攻击特效
         this.playAttackEffect();
-        
+
         // 造成伤害
         const damage = this.playerPet.attack;
         this.currentEnemy.hp = Math.max(0, this.currentEnemy.hp - damage);
-        
+
         // 更新UI
         this.updateEnemyUI();
-        
+
         // 给予经验值
         this.addXP(10);
-        
+
         // 检查敌人是否被击败
         setTimeout(() => {
             if (this.currentEnemy.hp <= 0) {
@@ -881,18 +884,21 @@ class Game {
      */
     handleWrongAnswer(button) {
         button.classList.add('wrong');
-        
+
+        // 显示"错误"反馈，附带正确答案
+        this.showFeedback(false, this.currentQuestion.answer);
+
         // 高亮显示正确答案
         this.elements.answerButtons.forEach(btn => {
             if (parseInt(btn.dataset.answer) === this.currentQuestion.answer) {
                 btn.classList.add('correct');
             }
         });
-        
+
         // 敌人反击
         setTimeout(() => {
             this.enemyAttack();
-            
+
             // 显示正确答案提示
             setTimeout(() => {
                 this.generateNewQuestion();
@@ -1198,6 +1204,34 @@ class Game {
         }
     }
     
+    /**
+     * 显示答题反馈弹窗
+     * @param {boolean} isCorrect - 是否正确
+     * @param {number} correctAnswer - 正确答案（仅错误时显示）
+     */
+    showFeedback(isCorrect, correctAnswer) {
+        const overlay = document.createElement('div');
+        overlay.className = `feedback-overlay ${isCorrect ? 'correct-feedback' : 'wrong-feedback'}`;
+
+        let html = '<div class="feedback-content">';
+        if (isCorrect) {
+            html += '<span class="feedback-emoji">🎉</span>';
+            html += '<span class="feedback-text">回答正确！</span>';
+        } else {
+            html += '<span class="feedback-emoji">😢</span>';
+            html += '<span class="feedback-text">答错啦～</span>';
+            html += `<div class="feedback-answer">正确答案是 ${correctAnswer}</div>`;
+        }
+        html += '</div>';
+
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.remove();
+        }, 1200);
+    }
+
     /**
      * 播放星星特效
      */
